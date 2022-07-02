@@ -1,0 +1,6 @@
+function E DTFT(x,N)
+   wk = -pi:2*pi/N:pi-2*pi*N;
+   n = 0:1:length(x)-1; 
+   E = exp(-j*wk*n); 
+end
+
