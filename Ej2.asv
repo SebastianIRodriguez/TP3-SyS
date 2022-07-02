@@ -1,0 +1,40 @@
+clear, clc;
+
+[y, Fs, Nbits] = wavread('tonos.wav');
+
+%{
+Con la ayuda de las funciones fft y fftshift de Matlab compute la DTFT de la señal Y completa y
+grafique el espectro de amplitud en función de la frecuencia en tiempo continuo asociada, en el rango
+entre [-Fs/2 , Fs/2]. Indique si es posible o no determinar el número marcado a partir del espectro de
+amplitud de la señal completa.
+%}
+
+leny = length(y);
+
+frec = [-Fs / 2:Fs / leny:Fs / 2 - Fs / leny];
+
+Y = fft(y);
+
+%********* GRAFICAMOS LA TRANSFORMADA EN FUNCIÓN DE FREQ. CONTINUAS
+plot(frec, fftshift(abs(Y)));
+xlabel('Frecuencia [Hz]');
+ylabel('Magnitud');
+
+frame_length = floor(450e-3 * Fs);
+
+for i = 1:leny / frame_length
+    
+    frame_start = frame_length * (i - 1) + 1;
+    frame_end = frame_length * i;
+    
+    frame = y(frame_start:frame_end, 1);
+    
+    Y_ventana = abs(fft(frame));
+    [freq1, pos1] = max(Y_ventana);
+    Y_ventana(pos1) = 0;
+    freq2 = max(Y_ventana);
+
+    discado(i) = Determinar_digito(min([freq1, freq2]), max([freq1, freq2]));
+end
+
+discado

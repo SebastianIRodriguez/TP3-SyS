@@ -1,37 +1,60 @@
-%load('datosADSL.mat');
-
 clear, clc;
 
-load gong.mat;
+%********* CARGAMOS LOS DATOS 
+load('datosADSL.mat');
+y = datosADSL;
 
-Fs = 8192;
+% La frecuencia máxima de la señal es 1.104e6 Hz
+Fs = 2 * 1.104e6;
 Ts = 1/Fs;
-n = length(y);
 
 x=[0:1:length(y)-1];
-
 x=x*Ts;
 
-%plot(x,y);
+%{
+%********* GRAFICAMOS datosADSL 
+plot(x,y);
+xlabel('Tiempo [s]');
+ylabel('Magnitud');
+%}
+
 
 %********* SACAMOS LA TRANSFORMADA
-Y=fft(y);
+n = 2^21;
+Y=fft(y,n);
+% 2^21 es la potencia de 2 inmediatamente superior a la longitud de la
+% muestra
 
-YY=abs(y);
-frec=[0:2*pi/n:2*pi];
-frec=frec(:,1:n);
+YY=abs(Y);
+frec=[-Fs/2 : Fs/n : Fs/2 - Fs/n];
 
-%********* GRAFICAMOS LA TRANSFORMADA
-plot(YY);xlabel('frecuencia w [rad/seg]');
+%********* GRAFICAMOS LA TRANSFORMADA EN FUNCIÓN DE FREQ. CONTINUAS
+plot(frec,fftshift(YY));
+xlabel('Frecuencia [Hz]');
 ylabel('Magnitud');
 
 k_voz_i = floor((300/Fs) *length(YY));
 k_voz_s = ceil((3400/Fs) *length(YY));
 
-filtervoz = [zeros(1,k_voz_i),ones(1,k_voz_s-k_voz_i),zeros(1,length(YY)-k_voz_s)];
+filtervoz = [zeros(1,k_voz_i),
+    ones(1,k_voz_s-k_voz_i),
+    zeros(1,length(YY)-2*(k_voz_s+k_voz_i)),
+    ones(1,k_voz_s-k_voz_i),
+    zeros(1,k_voz_i)];
 
-VOZ = filtervoz .* YY';
+filtervoz=zeros(n,1);
+filtervoz(n-k_voz_s:n-k_voz_i)=1;
+filtervoz(k_voz_i:k_voz_s)=1;
 
-plot(VOZ(:,k_voz_i:k_voz_s));
 
-voz = ifft(VOZ);
+VOZ = filtervoz .* YY;
+
+plot(VOZ(:,k_voz_i:k_voz_s))
+
+voz = real(ifft(VOZ));
+
+Fs_audio = 2^13;
+y_resample = resample(voz, Fs_audio, Fs);
+soundsc(y_resample, Fs_audio);
+soundsc(y_resample, Fs_audio*2);
+soundsc(y_resample, Fs_audio/2);
