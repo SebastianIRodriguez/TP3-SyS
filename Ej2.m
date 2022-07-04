@@ -24,18 +24,18 @@ title('Tonos.wav', 'FontWeight', 'bold');
 %}
 
 %********* GRAFICAMOS LA TRANSFORMADA EN FUNCIÓN DE FREQ. CONTINUAS
-%{
-plot(frec, fftshift(abs(Y)));
+
+plot(frec, fftshift(abs(Y)) / Fs);
 grid on;
 axis tight;
 xlabel('Frecuencia [Hz]');
-ylabel('Magnitud');
+ylabel('Amplitud');
 title('Espectro de tonos.wav', 'FontWeight', 'bold');
-%}
+
 
 frame_length = floor(450e-3 * Fs);
 
-H = fft(h, frame_length);
+% H = fft(h, frame_length);
 
 % kdiv divide en dos sexiones la transformada, siendo los k menores a kdiv
 % correspondientes a las bajas frecuencias y los k mayores a las altas frecuencias
