@@ -13,6 +13,7 @@ Y = fft(y);
 tiempo = [0:(1/Fs):(leny/Fs) - (1/Fs)];
 
 %********* SEÑAL EN FUNCIÓN DEL TIEMPO
+%{
 plot(tiempo, y);
 grid on;
 axis tight;
@@ -20,6 +21,7 @@ xlabel('Tiempo [s]');
 set(gca, 'xtick', 0:0.45:6);
 ylabel('Amplitud');
 title('Tonos.wav', 'FontWeight', 'bold');
+%}
 
 %********* GRAFICAMOS LA TRANSFORMADA EN FUNCIÓN DE FREQ. CONTINUAS
 %{
@@ -43,8 +45,10 @@ kdiv = 1000 * frame_length / Fs;
 num = h;
 den = [1 zeros(1, length(num) - 1)];
 
-%yfiltrada=filter(num,den,y);
-yfiltrada = y;
+yfiltrada=filter(num,den,y);
+
+% Descomentar si se quiere ver el código de la señal sin filtro
+%yfiltrada=y;
 
 for i = 1:(leny / frame_length)
 
@@ -66,31 +70,6 @@ end
 
 % En cada posición de "discado" queda guardado el caracter correspondiente,
 % de ser inválido guarda un espacio
-discado
-
-%plot(h);
-
-for i = 1:(leny / frame_length)
-
-    frame_start = frame_length * (i - 1) + 1;
-    frame_end = frame_length * i;
-
-    frame = y(frame_start:frame_end, 1);
-
-    Y_ventana = abs(fft(frame) .* H');
-
-    [~, k_low] = max(Y_ventana(1:kdiv));
-    [~, k_high] = max(Y_ventana(kdiv:length(Y_ventana) / 2));
-
-    freq_low = k_low * Fs / frame_length;
-    freq_high = (k_high + kdiv) * Fs / frame_length;
-
-    %freq_low = min([freq1, freq2])
-    %freq_high = max([freq1, freq2])
-
-    discado(i) = Determinar_digito(freq_low, freq_high);
-end
-
 discado
 
 %plot(h);

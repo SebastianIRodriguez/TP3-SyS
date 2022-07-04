@@ -1,11 +1,11 @@
 function [digito] = Determinar_digito(f1, f2)
-%{
-Realice una función que tome como argumentos de entrada dos frecuencias, F1 y F2 (F1 < F2), y como
-argumento de salida la variable digito, correspondiente al dígito identificado. Para ello compare F1
-con cada una de las frecuencias FL y F2 con cada una de las frecuencias FH. En caso de que alguna de las
-frecuencias estuviera fuera del rango (FL ± 1.8% y FH ± 1.8%), la variable de salida debe ser
-digito=[].
-%}
+%
+%Toma como argumentos de entrada dos frecuencias, F1 y F2 (F1 < F2), y como
+%argumento de salida la variable digito, correspondiente al dígito identificado. 
+%Sintaxis: digito = Determinar_digito(F1, F2);
+%En caso de que alguna de las frecuencias estuviera fuera del rango 
+%(FL +- 1.8% y FH +- 1.8%), la variable de salida sera el digito=' ' (espacio en blanco).
+%
 
     Fl = [697, 770, 852, 941];
     Fh = [1209, 1336, 1477, 1633];
